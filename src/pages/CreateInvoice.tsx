@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAppStore } from '../store';
 import type { Invoice, InvoiceItem, Customer } from '../types';
 import { format } from 'date-fns';
@@ -71,7 +71,6 @@ function blankInvoice(invoiceNo: string): Partial<Invoice> {
 }
 
 export default function CreateInvoice() {
-  const navigate = useNavigate(); // used in handleSaveAndNew and edit/duplicate redirect
   const location = useLocation();
   const { settings, getNextInvoiceNumber, saveInvoice, invoices } = useAppStore();
   const previewRef = useRef<HTMLDivElement | null>(null);
@@ -243,7 +242,7 @@ export default function CreateInvoice() {
     if (!doSave('Saved')) return;
     // Generate next number and reset
     const nextNo = getNextInvoiceNumber();
-    setInvoice(blankInvoice(nextNo, settings.defaultGstRate));
+    setInvoice(blankInvoice(nextNo));
     setSuccessMsg('Invoice saved! New invoice ready.');
     setTimeout(() => setSuccessMsg(''), 3000);
     window.scrollTo({ top: 0, behavior: 'smooth' });
