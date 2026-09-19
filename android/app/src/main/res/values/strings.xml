@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SD Enterprises Invoice</string>
+    <string name="title_activity_main">SD Enterprises Invoice</string>
+    <string name="package_name">com.sdenterprises.gstinvoice</string>
+    <string name="custom_url_scheme">com.sdenterprises.gstinvoice</string>
+</resources>
