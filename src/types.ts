@@ -44,7 +44,8 @@ export interface Invoice {
   customerId: string;
   customerDetails: Customer;
   items: InvoiceItem[];
-  isInterState: boolean;
+  isInterState?: boolean; // legacy
+  transactionType: 'intra-state' | 'inter-state' | 'non-gst';
   totalTaxableValue: number;
   totalDiscount: number;
   totalCgst: number;

@@ -5,7 +5,7 @@ export function calculateItemTaxes(
   quantity: number,
   discount: number,
   gstPercent: number,
-  isInterState: boolean
+  transactionType: 'intra-state' | 'inter-state' | 'non-gst'
 ): Omit<InvoiceItem, 'id' | 'productId' | 'description' | 'hsn' | 'cardNo' | 'quantity' | 'unit' | 'rate' | 'discount' | 'gstPercent'> {
   const taxableValue = (rate * quantity) - discount;
   
@@ -13,9 +13,9 @@ export function calculateItemTaxes(
   let sgst = 0;
   let igst = 0;
 
-  if (isInterState) {
+  if (transactionType === 'inter-state') {
     igst = taxableValue * (gstPercent / 100);
-  } else {
+  } else if (transactionType === 'intra-state') {
     cgst = taxableValue * ((gstPercent / 2) / 100);
     sgst = taxableValue * ((gstPercent / 2) / 100);
   }

@@ -140,7 +140,7 @@ export default function CreateInvoice() {
       roundOff,
       amountInWords
     }));
-  }, [invoice.items, invoice.isInterState]);
+  }, [invoice.items, invoice.transactionType]);
 
   const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -165,7 +165,7 @@ export default function CreateInvoice() {
           Number(item.quantity || 0),
           Number(item.discount || 0),
           Number(item.gstPercent || settings.defaultGstRate),
-          !!prev.isInterState
+          prev.transactionType || 'intra-state'
         );
         Object.assign(item, taxes);
       }
@@ -173,15 +173,15 @@ export default function CreateInvoice() {
       newItems[index] = item;
       return { ...prev, items: newItems };
     });
-  }, [settings.defaultGstRate, invoice.isInterState]);
+  }, [settings.defaultGstRate, invoice.transactionType]);
 
-  const handleInterStateChange = (isInterState: boolean) => {
+  const handleTransactionTypeChange = (transactionType: 'intra-state' | 'inter-state' | 'non-gst') => {
     setInvoice(prev => {
       const newItems = (prev.items || []).map(item => ({
         ...item,
-        ...calculateItemTaxes(item.rate, item.quantity, item.discount, item.gstPercent, isInterState)
+        ...calculateItemTaxes(item.rate, item.quantity, item.discount, item.gstPercent, transactionType)
       }));
-      return { ...prev, isInterState, items: newItems };
+      return { ...prev, transactionType, items: newItems };
     });
   };
 
@@ -296,7 +296,9 @@ export default function CreateInvoice() {
 
     wsData.push(['', '', '', '', 'Taxable Amount', invoice.totalTaxableValue || 0]);
 
-    if (invoice.isInterState) {
+    if (invoice.transactionType === 'non-gst') {
+      // No GST rows
+    } else if (invoice.transactionType === 'inter-state' || invoice.isInterState) {
       wsData.push(['', '', '', '', 'IGST', invoice.totalIgst || 0]);
     } else {
       wsData.push(['', '', '', '', 'CGST', invoice.totalCgst || 0]);
@@ -554,8 +556,8 @@ export default function CreateInvoice() {
                 id="intra-state"
                 type="radio"
                 name="transactionType"
-                checked={!invoice.isInterState}
-                onChange={() => handleInterStateChange(false)}
+                checked={(invoice.transactionType || 'intra-state') === 'intra-state'}
+                onChange={() => handleTransactionTypeChange('intra-state')}
                 className="w-4 h-4 text-blue-600"
               />
               <span className="text-sm font-medium text-gray-700">Intra-State (CGST + SGST)</span>
@@ -565,11 +567,22 @@ export default function CreateInvoice() {
                 id="inter-state"
                 type="radio"
                 name="transactionType"
-                checked={!!invoice.isInterState}
-                onChange={() => handleInterStateChange(true)}
+                checked={invoice.transactionType === 'inter-state'}
+                onChange={() => handleTransactionTypeChange('inter-state')}
                 className="w-4 h-4 text-blue-600"
               />
               <span className="text-sm font-medium text-gray-700">Inter-State (IGST)</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                id="non-gst"
+                type="radio"
+                name="transactionType"
+                checked={invoice.transactionType === 'non-gst'}
+                onChange={() => handleTransactionTypeChange('non-gst')}
+                className="w-4 h-4 text-blue-600"
+              />
+              <span className="text-sm font-medium text-gray-700">Non-GST</span>
             </label>
           </div>
         </div>
@@ -596,7 +609,7 @@ export default function CreateInvoice() {
                   <th className="px-3 py-2 text-left w-28">Card No.</th>
                   <th className="px-3 py-2 text-left w-20">Qty *</th>
                   <th className="px-3 py-2 text-left w-24">Rate *</th>
-                  <th className="px-3 py-2 text-left w-20">GST %</th>
+                  {invoice.transactionType !== 'non-gst' && <th className="px-3 py-2 text-left w-20">GST %</th>}
                   <th className="px-3 py-2 text-right w-28">Amount</th>
                   <th className="px-3 py-2 w-10"></th>
                 </tr>
@@ -646,18 +659,20 @@ export default function CreateInvoice() {
                         className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
                       />
                     </td>
-                    <td className="px-3 py-2">
-                      <select
-                        id={`item-gst-${index}`}
-                        value={item.gstPercent}
-                        onChange={e => handleItemChange(index, 'gstPercent', Number(e.target.value))}
-                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white"
-                      >
-                        {GST_RATES.map(r => (
-                          <option key={r} value={r}>{r}%</option>
-                        ))}
-                      </select>
-                    </td>
+                    {invoice.transactionType !== 'non-gst' && (
+                      <td className="px-3 py-2">
+                        <select
+                          id={`item-gst-${index}`}
+                          value={item.gstPercent}
+                          onChange={e => handleItemChange(index, 'gstPercent', Number(e.target.value))}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white"
+                        >
+                          {GST_RATES.map(r => (
+                            <option key={r} value={r}>{r}%</option>
+                          ))}
+                        </select>
+                      </td>
+                    )}
                     <td className="px-3 py-2 text-right">
                       <span className="font-semibold text-gray-800">₹{item.taxableValue.toFixed(2)}</span>
                     </td>
@@ -710,7 +725,9 @@ export default function CreateInvoice() {
                 <span>Taxable Amount</span>
                 <span className="font-medium text-gray-900">₹{totalTaxable.toFixed(2)}</span>
               </div>
-              {invoice.isInterState ? (
+              {invoice.transactionType === 'non-gst' ? (
+                 null // No GST rows
+              ) : invoice.transactionType === 'inter-state' ? (
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>IGST</span>
                   <span className="font-medium text-gray-900">₹{totalIgst.toFixed(2)}</span>

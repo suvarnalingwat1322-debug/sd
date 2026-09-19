@@ -21,7 +21,7 @@ export default function InvoicePreview({ invoice, settings, previewRef }: Props)
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '16px' }}>
         <div style={{ fontSize: '11px', fontWeight: 'bold', borderBottom: '2px solid black', display: 'inline-block', paddingBottom: '2px', paddingLeft: '16px', paddingRight: '16px', letterSpacing: '3px', marginBottom: '6px' }}>
-          TAX INVOICE
+          {invoice.transactionType === 'non-gst' ? 'NON-GST' : 'TAX INVOICE'}
         </div>
         <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 2px' }}>{settings.businessName}</h1>
         <p style={{ margin: '2px 0', fontWeight: '600' }}>{settings.businessAddress}</p>
@@ -124,7 +124,9 @@ export default function InvoicePreview({ invoice, settings, previewRef }: Props)
             <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.totalTaxableValue?.toFixed(2) || '0.00'}</td>
           </tr>
 
-          {invoice.isInterState ? (
+          {invoice.transactionType === 'non-gst' ? (
+             null
+          ) : invoice.transactionType === 'inter-state' || invoice.isInterState ? (
             <tr>
               <td colSpan={5} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>IGST {isSingleRate && singleRate ? `@ ${singleRate}%` : ''}</td>
               <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.totalIgst?.toFixed(2) || '0.00'}</td>

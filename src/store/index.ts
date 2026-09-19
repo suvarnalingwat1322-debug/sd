@@ -77,6 +77,7 @@ export const useAppStore = create<AppState>()(
           total: 3880.8
         }],
         isInterState: true,
+        transactionType: 'inter-state',
         totalTaxableValue: 3696,
         totalDiscount: 0,
         totalCgst: 0,
