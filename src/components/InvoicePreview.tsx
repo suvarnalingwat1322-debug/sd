@@ -80,13 +80,10 @@ export default function InvoicePreview({ invoice, settings, previewRef }: Props)
           <tr style={{ borderBottom: '2px solid black', fontWeight: 'bold', backgroundColor: '#f9f9f9' }}>
             <th style={{ border: '1px solid black', padding: '5px 4px', width: '36px' }}>Sr.no</th>
             <th style={{ border: '1px solid black', padding: '5px 4px', textAlign: 'left' }}>DESCRIPTION OF GOODS</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '70px' }}>CARD NO</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '40px' }}>QTY</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '50px' }}>RATE</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '65px' }}>TAXABLE</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '45px' }}>GST %</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '60px' }}>GST AMT</th>
-            <th style={{ border: '1px solid black', padding: '5px 4px', width: '65px' }}>TOTAL</th>
+            <th style={{ border: '1px solid black', padding: '5px 4px', width: '80px' }}>CARD NO</th>
+            <th style={{ border: '1px solid black', padding: '5px 4px', width: '64px' }}>QUANTITY</th>
+            <th style={{ border: '1px solid black', padding: '5px 4px', width: '64px' }}>RATE</th>
+            <th style={{ border: '1px solid black', padding: '5px 4px', width: '80px' }}>TOTAL</th>
           </tr>
         </thead>
         <tbody>
@@ -97,16 +94,10 @@ export default function InvoicePreview({ invoice, settings, previewRef }: Props)
               <td style={{ border: '1px solid black', padding: '4px' }}>{item.cardNo || '-'}</td>
               <td style={{ border: '1px solid black', padding: '4px' }}>{item.quantity}</td>
               <td style={{ border: '1px solid black', padding: '4px' }}>{item.rate.toFixed(2)}</td>
-              <td style={{ border: '1px solid black', padding: '4px', fontWeight: '600' }}>{item.taxableValue.toFixed(2)}</td>
-              <td style={{ border: '1px solid black', padding: '4px' }}>{item.gstPercent}%</td>
-              <td style={{ border: '1px solid black', padding: '4px' }}>{(item.cgst + item.sgst + item.igst).toFixed(2)}</td>
               <td style={{ border: '1px solid black', padding: '4px', fontWeight: '600' }}>{item.total.toFixed(2)}</td>
             </tr>
           )) : (
             <tr>
-              <td style={{ border: '1px solid black', padding: '4px' }}></td>
-              <td style={{ border: '1px solid black', padding: '4px' }}></td>
-              <td style={{ border: '1px solid black', padding: '4px' }}></td>
               <td style={{ border: '1px solid black', padding: '4px' }}></td>
               <td style={{ border: '1px solid black', padding: '4px' }}></td>
               <td style={{ border: '1px solid black', padding: '4px' }}></td>
@@ -124,43 +115,40 @@ export default function InvoicePreview({ invoice, settings, previewRef }: Props)
               <td style={{ border: '1px solid black', padding: '4px' }}></td>
               <td style={{ border: '1px solid black', padding: '4px' }}></td>
               <td style={{ border: '1px solid black', padding: '4px' }}></td>
-              <td style={{ border: '1px solid black', padding: '4px' }}></td>
-              <td style={{ border: '1px solid black', padding: '4px' }}></td>
-              <td style={{ border: '1px solid black', padding: '4px' }}></td>
             </tr>
           ))}
 
           {/* Tax rows */}
           <tr style={{ borderTop: '2px solid black' }}>
-            <td colSpan={8} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>Taxable Amount</td>
+            <td colSpan={5} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>Taxable Amount</td>
             <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.totalTaxableValue?.toFixed(2) || '0.00'}</td>
           </tr>
 
           {invoice.isInterState ? (
             <tr>
-              <td colSpan={8} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>IGST {isSingleRate && singleRate ? `@ ${singleRate}%` : ''}</td>
+              <td colSpan={5} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>IGST {isSingleRate && singleRate ? `@ ${singleRate}%` : ''}</td>
               <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.totalIgst?.toFixed(2) || '0.00'}</td>
             </tr>
           ) : (
             <>
               <tr>
-                <td colSpan={8} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>CGST {isSingleRate && singleRate ? `@ ${singleRate / 2}%` : ''}</td>
+                <td colSpan={5} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>CGST {isSingleRate && singleRate ? `@ ${singleRate / 2}%` : ''}</td>
                 <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.totalCgst?.toFixed(2) || '0.00'}</td>
               </tr>
               <tr>
-                <td colSpan={8} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>SGST {isSingleRate && singleRate ? `@ ${singleRate / 2}%` : ''}</td>
+                <td colSpan={5} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>SGST {isSingleRate && singleRate ? `@ ${singleRate / 2}%` : ''}</td>
                 <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.totalSgst?.toFixed(2) || '0.00'}</td>
               </tr>
             </>
           )}
           {(invoice.roundOff !== undefined && invoice.roundOff !== 0) && (
             <tr>
-              <td colSpan={8} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>Round Off</td>
+              <td colSpan={5} style={{ border: '1px solid black', padding: '4px', textAlign: 'right', fontWeight: 'bold' }}>Round Off</td>
               <td style={{ border: '1px solid black', padding: '4px', fontWeight: 'bold' }}>{invoice.roundOff?.toFixed(2)}</td>
             </tr>
           )}
           <tr style={{ backgroundColor: '#f0f0f0' }}>
-            <td colSpan={8} style={{ border: '1px solid black', padding: '6px 4px', textAlign: 'right', fontWeight: 'bold', fontSize: '13px' }}>TOTAL AMOUNT</td>
+            <td colSpan={5} style={{ border: '1px solid black', padding: '6px 4px', textAlign: 'right', fontWeight: 'bold', fontSize: '13px' }}>TOTAL AMOUNT</td>
             <td style={{ border: '1px solid black', padding: '6px 4px', fontWeight: 'bold', fontSize: '13px' }}>{invoice.grandTotal?.toFixed(2) || '0.00'}</td>
           </tr>
         </tbody>
