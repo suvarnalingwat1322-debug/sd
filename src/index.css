@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@media print {
+  body {
+    @apply bg-white;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  @page {
+    margin: 0.5cm;
+  }
+}
