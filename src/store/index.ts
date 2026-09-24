@@ -1,17 +1,23 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Customer, Invoice, Product, Settings } from '../types';
+import type { Customer, Invoice, Product, Settings, CustomerRecord } from '../types';
 
 interface AppState {
   customers: Customer[];
   products: Product[];
   invoices: Invoice[];
+  customerRecords: CustomerRecord[];
   settings: Settings;
   lastInvoiceNumber: number;
   
   addCustomer: (customer: Customer) => void;
   updateCustomer: (id: string, customer: Customer) => void;
   deleteCustomer: (id: string) => void;
+  
+  addCustomerRecord: (record: CustomerRecord) => void;
+  updateCustomerRecord: (id: string, record: CustomerRecord) => void;
+  deleteCustomerRecord: (id: string) => void;
+  importCustomerRecords: (records: CustomerRecord[]) => void;
   
   addProduct: (product: Product) => void;
   updateProduct: (id: string, product: Product) => void;
@@ -43,6 +49,7 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       customers: [],
       products: [],
+      customerRecords: [],
       invoices: [{
         id: 'sample-1',
         invoiceNo: 'INV-001',
@@ -97,6 +104,17 @@ export const useAppStore = create<AppState>()(
       })),
       deleteCustomer: (id) => set((state) => ({
         customers: state.customers.filter(c => c.id !== id)
+      })),
+      
+      addCustomerRecord: (record) => set((state) => ({ customerRecords: [...state.customerRecords, record] })),
+      updateCustomerRecord: (id, updated) => set((state) => ({
+        customerRecords: state.customerRecords.map(r => r.id === id ? updated : r)
+      })),
+      deleteCustomerRecord: (id) => set((state) => ({
+        customerRecords: state.customerRecords.filter(r => r.id !== id)
+      })),
+      importCustomerRecords: (records) => set((state) => ({
+        customerRecords: [...state.customerRecords, ...records]
       })),
       
       addProduct: (product) => set((state) => ({ products: [...state.products, product] })),

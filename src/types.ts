@@ -70,3 +70,16 @@ export interface Settings {
   termsAndConditions: string;
   sellerGstin: string;
 }
+
+export interface CustomerRecord {
+  id: string;
+  customerName: string;
+  rate: number | null;
+  cgst: number | null;
+  sgst: number | null;
+  totalIn: number | null;
+  total: number | null;
+  gstTotal: number | null;
+  createdAt?: string;
+  updatedAt?: string;
+}

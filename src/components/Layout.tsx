@@ -1,11 +1,12 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, History } from 'lucide-react';
+import { LayoutDashboard, FileText, Settings, History, Users } from 'lucide-react';
 
 export default function Layout() {
   const location = useLocation();
   
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Customer List', path: '/customer-list', icon: Users },
     { name: 'Create Invoice', path: '/create', icon: FileText },
     { name: 'History', path: '/history', icon: History },
     { name: 'Settings', path: '/settings', icon: Settings },
